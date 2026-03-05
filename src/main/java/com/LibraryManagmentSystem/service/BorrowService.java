@@ -3,14 +3,22 @@ package com.LibraryManagmentSystem.service;
 import com.LibraryManagmentSystem.Entities.Book;
 import com.LibraryManagmentSystem.Entities.BorrowRecord;
 import com.LibraryManagmentSystem.Entities.Reader;
+import com.LibraryManagmentSystem.dto.BorrowDebtorRequest;
+import com.LibraryManagmentSystem.dto.BorrowRequest;
+import com.LibraryManagmentSystem.dto.BorrowResponce;
 import com.LibraryManagmentSystem.repository.BookRepository;
 import com.LibraryManagmentSystem.repository.BorrowRecordRepository;
 import com.LibraryManagmentSystem.repository.ReaderRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 
 import java.time.LocalDate;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -31,8 +39,18 @@ public class BorrowService {
         return borrowRecordRepository.findByIsReturnedFalse();
     }
 
-    public List<BorrowRecord> overdueBorrow(LocalDate date) {
-        return borrowRecordRepository.findByReturnDeadLineBeforeAndIsReturnedFalse(date);
+    public List<BorrowDebtorRequest> overdueBorrow(LocalDate date) {
+        var list = borrowRecordRepository.findByReturnDeadLineBeforeAndIsReturnedFalse(date);
+        List<BorrowDebtorRequest> borrowDebtorRequests = new ArrayList<>();
+        for (BorrowRecord borrowRecord : list){
+            BorrowDebtorRequest borrowDebtorRequest = new BorrowDebtorRequest();
+            borrowDebtorRequest.setBookName(borrowRecord.getBook().getName());
+            borrowDebtorRequest.setReaderName(borrowRecord.getReader().getFullName());
+            borrowDebtorRequest.setDueDate(borrowRecord.getReturnDeadLine());
+            borrowDebtorRequest.setDaysOverdue(ChronoUnit.DAYS.between(borrowRecord.getReturnDeadLine() , date));
+            borrowDebtorRequests.add(borrowDebtorRequest);
+        }
+        return borrowDebtorRequests;
     }
 
     public List<BorrowRecord> booksFromReader(Long Id) {
@@ -46,8 +64,8 @@ public class BorrowService {
     public List<BorrowRecord> activeBorrow(Long id) {
         return borrowRecordRepository.findByBookIdAndIsReturnedFalse(id);
     }
-
-    public BorrowRecord borrowBook(
+    @Transactional
+    public BorrowResponce createBorrowBook(
             Long id,
             Long readerId
     ) {
@@ -64,16 +82,20 @@ public class BorrowService {
         borrowRecord.setBook(book);
         borrowRecord.setReader(reader);
         borrowRecord.setReturnDeadLine(LocalDate.now().plusDays(14));
-
-        return borrowRecordRepository.save(borrowRecord);
+        BorrowRecord save = borrowRecordRepository.save(borrowRecord);
+        BorrowResponce borrowResponce = new BorrowResponce();
+        borrowResponce.setId(save.getId());
+        borrowResponce.setNameBook(save.getBook().getName());
+        borrowResponce.setReturnDeadLine(save.getReturnDeadLine());
+        return borrowResponce;
 
     }
     @Transactional
-    public void borrowBack(
+    public void returnBorrowBook(
             Long recordId
     ){
         BorrowRecord record = borrowRecordRepository.findById(recordId)
-                .orElseThrow(() -> new NoSuchElementException("Record bot found"));
+                .orElseThrow(() -> new NoSuchElementException("Record not found"));
         if (record.isReturned()) {
             throw new RuntimeException("Book was returned");
         }

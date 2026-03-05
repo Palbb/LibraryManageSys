@@ -1,10 +1,14 @@
 package com.LibraryManagmentSystem.service;
 
 import com.LibraryManagmentSystem.Entities.Book;
+import com.LibraryManagmentSystem.dto.BookRequest;
+import com.LibraryManagmentSystem.dto.BookResponce;
 import com.LibraryManagmentSystem.repository.BookRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class BookService {
@@ -14,19 +18,70 @@ public class BookService {
         this.bookRepository = repository;
     }
 
-    public List<Book> getAllBooks(){
-        return bookRepository.findAll();
+
+    public List<BookResponce> getAllBooks(){
+        return toBookResponces(bookRepository.findAll());
+
     }
 
-    public List<Book> getBooksByAuthor(String author) {
-        return bookRepository.findByAuthorContaining(author);
+    public BookResponce getBookById(Long id){
+
+         var bookbyid =  bookRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Book with id "+ id + " does not exists"));
+
+        BookResponce dto = new BookResponce();
+
+        dto.setAuthor(bookbyid.getAuthor());
+        dto.setIsbn(bookbyid.getIsbn());
+        dto.setName(bookbyid.getName());
+        dto.setTitle(bookbyid.getTitle());
+
+        return dto;
     }
 
-    public Book createBook(Book book){
+    public List<BookResponce> getBooksByAuthor(String author) {
+
+        return toBookResponces(bookRepository.findByAuthorContaining(author));
+    }
+
+    public BookResponce createBook(BookRequest dto){
+        Book book = new Book();
+        book.setAuthor(dto.getAuthor());
+        book.setIsbn(dto.getIsbn());
+        book.setName(dto.getName());
+        book.setTitle(dto.getTitle());
+        book.setAvailableCopies(dto.getAvailableCopies());
         if (bookRepository.existsByIsbn(book.getIsbn())){
             throw new RuntimeException("A book with this ISBN already exists.");
         }
         var save = bookRepository.save(book);
-        return save;
+        return toBookResponce(save);
+    }
+    private List<BookResponce> toBookResponces(List<Book> list){
+        List<BookResponce> bookResponces = new ArrayList<>();
+
+        for (Book book : list){
+            BookResponce dto = new BookResponce();
+            dto.setId(book.getId());
+            dto.setAuthor(book.getAuthor());
+            dto.setTitle(book.getTitle());
+            dto.setName(book.getName());
+            dto.setIsbn(book.getIsbn());
+            bookResponces.add(dto);
+        }
+        return bookResponces;
+    }
+    private BookResponce toBookResponce(Book book){
+
+        BookResponce dto = new BookResponce();
+
+            dto.setId(book.getId());
+            dto.setAuthor(book.getAuthor());
+            dto.setTitle(book.getTitle());
+            dto.setName(book.getName());
+            dto.setIsbn(book.getIsbn());
+            dto.setAvailableCopies((book.getAvailableCopies()));
+
+        return dto;
     }
 }
