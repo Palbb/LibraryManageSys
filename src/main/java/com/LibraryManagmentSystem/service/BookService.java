@@ -12,7 +12,7 @@ import java.util.NoSuchElementException;
 
 @Service
 public class BookService {
-    private BookRepository bookRepository;
+    private final BookRepository bookRepository;
 
     public BookService(BookRepository repository) {
         this.bookRepository = repository;
@@ -21,7 +21,6 @@ public class BookService {
 
     public List<BookResponce> getAllBooks(){
         return toBookResponces(bookRepository.findAll());
-
     }
 
     public BookResponce getBookById(Long id){
@@ -52,11 +51,20 @@ public class BookService {
         book.setTitle(dto.getTitle());
         book.setAvailableCopies(dto.getAvailableCopies());
         if (bookRepository.existsByIsbn(book.getIsbn())){
-            throw new RuntimeException("A book with this ISBN already exists.");
+            throw new IllegalStateException("A book with this ISBN already exists : " + book.getIsbn());
         }
         var save = bookRepository.save(book);
         return toBookResponce(save);
     }
+
+    public void deleteBook(String name){
+        if (!bookRepository.existsByName(name)){
+            throw new IllegalStateException("A book with this name does not exists : " + name);
+        }
+        Book delete = bookRepository.findByNameContaining(name).get(0);
+        bookRepository.delete(delete);
+    }
+
     private List<BookResponce> toBookResponces(List<Book> list){
         List<BookResponce> bookResponces = new ArrayList<>();
 
@@ -67,6 +75,7 @@ public class BookService {
             dto.setTitle(book.getTitle());
             dto.setName(book.getName());
             dto.setIsbn(book.getIsbn());
+            dto.setAvailableCopies(book.getAvailableCopies());
             bookResponces.add(dto);
         }
         return bookResponces;

@@ -11,6 +11,10 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     List<Book> findByAvailableCopiesGreaterThan(int limit);
 
+    List<Book> findByNameContaining(String name);
+
     Boolean existsByIsbn(String isbn);
+
+    Boolean existsByName(String name);
 
 }

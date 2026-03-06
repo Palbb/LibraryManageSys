@@ -70,11 +70,11 @@ public class BorrowService {
             Long readerId
     ) {
         Book book = bookRepository.findById(id).
-                orElseThrow(() -> new NoSuchElementException("Book not found"));
+                orElseThrow(() -> new NoSuchElementException("Book not found : " + id));
         Reader reader = readerRepository.findById(readerId)
-                .orElseThrow(() -> new NoSuchElementException("Reader not found"));
+                .orElseThrow(() -> new NoSuchElementException("Reader not found : " + readerId));
         if (book.getAvailableCopies()<=0){
-            throw new IllegalStateException("Not found avaible copies");
+            throw new IllegalStateException("Not found avaible copies : " + book.getAvailableCopies());
         }
         book.setAvailableCopies(book.getAvailableCopies() - 1);
         bookRepository.save(book);
@@ -95,9 +95,9 @@ public class BorrowService {
             Long recordId
     ){
         BorrowRecord record = borrowRecordRepository.findById(recordId)
-                .orElseThrow(() -> new NoSuchElementException("Record not found"));
+                .orElseThrow(() -> new NoSuchElementException("Record not found :" + recordId));
         if (record.isReturned()) {
-            throw new RuntimeException("Book was returned");
+            throw new RuntimeException("Book was returned : " + record.isReturned());
         }
         record.setReturned(true);
         Book book = record.getBook();
