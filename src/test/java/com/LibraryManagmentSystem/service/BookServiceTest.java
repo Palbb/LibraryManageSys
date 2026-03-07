@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -63,7 +64,7 @@ class BookServiceTest {
     }
 
     @Test
-    void getBookById() {
+    void getBookByIdSuccess() {
         when(bookRepository.findById(book1.getId())).thenReturn(Optional.of(book1));
         BookResponce responce = bookService.getBookById(book1.getId());
 
@@ -72,9 +73,18 @@ class BookServiceTest {
 
         verify(bookRepository, Mockito.times(1)).findById(book1.getId());
     }
+    @Test
+    void getBookByIdFailure() {
+        when(bookRepository.findById(book1.getId())).thenReturn(Optional.empty());
+
+        assertThrows(NoSuchElementException.class, () -> {
+            bookService.getBookById(book1.getId());
+        });
+        verify(bookRepository, Mockito.times(1)).findById(book1.getId());
+    }
 
     @Test
-    void getBooksByAuthor() {
+    void getBooksByAuthorSuccess() {
         List<Book> mockBooks = new ArrayList<>();
         mockBooks.add(book1);
         when(bookRepository.findByAuthorContaining(book1.getAuthor())).thenReturn(mockBooks);
@@ -83,6 +93,17 @@ class BookServiceTest {
         assertNotNull(result);
         assertEquals(1,result.size());
         assertEquals("Me", result.get(0).getAuthor());
+
+        verify(bookRepository, Mockito.times(1)).findByAuthorContaining(book1.getAuthor());
+    }
+    @Test
+    void getBooksByAuthorFailure() {
+        when(bookRepository.findByAuthorContaining(book1.getAuthor())).thenReturn(List.of());
+
+        var result = bookService.getBooksByAuthor(book1.getAuthor());
+
+        assertNotNull(result);
+        assertEquals(0,result.size());
 
         verify(bookRepository, Mockito.times(1)).findByAuthorContaining(book1.getAuthor());
     }
@@ -108,7 +129,7 @@ class BookServiceTest {
     }
 
     @Test
-    void createBookFailrule(){
+    void createBookFailure(){
         BookRequest request = new BookRequest();
         request.setAuthor(book1.getAuthor());
         request.setIsbn(book1.getIsbn());

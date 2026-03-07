@@ -23,11 +23,6 @@ public class ReaderService {
                 orElseThrow(() -> new NoSuchElementException("Reader with this email" + email + " does not exist ")));
     }
 
-    public ReaderResponce getById(Long id){
-        return toReaderResponce( readerRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Reader with this id" + id + " does not exists")));
-    }
-
     public ReaderResponce getByFullName(String fullName){
         return toReaderResponce( readerRepository.findByFullNameContainingIgnoreCase(fullName)
                 .orElseThrow(() -> new NoSuchElementException("Reader with this fullname" + fullName + " does not exist ")));
@@ -36,12 +31,12 @@ public class ReaderService {
 
     public ReaderResponce createReader(ReaderCreateRequest dto){
         if (readerRepository.existsByEmail(dto.getEmail())){
-            throw new RuntimeException("Reader with this email already exists");
+            throw new IllegalArgumentException("Reader with this email already exists");
         }
         Reader reader = new Reader();
         reader.setEmail(dto.getEmail());
         reader.setFullName(dto.getFullName());
-        var save =readerRepository.save(reader);
+        var save = readerRepository.save(reader);
         return toReaderResponce(save);
     }
 
@@ -56,6 +51,7 @@ public class ReaderService {
         dto.setEmail(reader.getEmail());
         dto.setFullName(reader.getFullName());
         dto.setId(reader.getId());
+        dto.setRegistrationDate(reader.getRegistrationDate());
         return dto;
     }
 }
