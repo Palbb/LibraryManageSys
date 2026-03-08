@@ -1,13 +1,10 @@
 package com.LibraryManagmentSystem.dto;
 
-import com.LibraryManagmentSystem.Entities.Book;
-import com.LibraryManagmentSystem.Entities.Reader;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 
-public class BorrowDebtorRequest {
+public class BorrowDebtorResponce {
     @NotNull
     private String readerName;
     @NotNull

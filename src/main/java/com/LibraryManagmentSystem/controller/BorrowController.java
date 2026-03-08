@@ -1,7 +1,6 @@
 package com.LibraryManagmentSystem.controller;
 
-import com.LibraryManagmentSystem.Entities.BorrowRecord;
-import com.LibraryManagmentSystem.dto.BorrowDebtorRequest;
+import com.LibraryManagmentSystem.dto.BorrowDebtorResponce;
 import com.LibraryManagmentSystem.dto.BorrowRequest;
 import com.LibraryManagmentSystem.dto.BorrowResponce;
 import com.LibraryManagmentSystem.service.BorrowService;
@@ -42,7 +41,7 @@ public class BorrowController {
     }
 
     @GetMapping("/alldebtors")
-    public ResponseEntity<List<BorrowDebtorRequest>> getDebtors (
+    public ResponseEntity<List<BorrowDebtorResponce>> getDebtors (
     ){
         return ResponseEntity.ok().body(borrowService.overdueBorrow(LocalDate.now()));
     }

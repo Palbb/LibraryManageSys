@@ -6,8 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 public class ReaderCreateRequest {
     @NotBlank(message = "The fullname must be written")
     private String fullName;
-    @NotBlank(message = "The email must be written")
-    @Email
+    @NotBlank(message = "The email must be written correctly")
+    @Email()
     private String email;
 
     public void setFullName(String fullName) {
