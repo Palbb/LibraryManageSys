@@ -15,7 +15,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class ReaderService {
-    private ReaderRepository readerRepository;
+    private final ReaderRepository readerRepository;
 
     public ReaderResponce getReaderByEmail(String email){
         log.info("Searching for reader by email: {}", email);

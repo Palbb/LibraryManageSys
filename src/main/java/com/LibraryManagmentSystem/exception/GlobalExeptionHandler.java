@@ -21,7 +21,7 @@ public class GlobalExeptionHandler {
         apiError.setTimestamp(LocalDateTime.now());
         return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
     }
-    @ExceptionHandler
+    @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<ApiError> handleIllegalState(IllegalStateException ex){
         ApiError apiError = new ApiError();
         apiError.setMessage(ex.getMessage());

@@ -11,6 +11,8 @@ import com.LibraryManagmentSystem.repository.ReaderRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 
@@ -24,9 +26,9 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 public class BorrowService {
 
-    private ReaderRepository readerRepository;
-    private BookRepository bookRepository;
-    private BorrowRecordRepository borrowRecordRepository;
+    private final ReaderRepository readerRepository;
+    private final BookRepository bookRepository;
+    private final BorrowRecordRepository borrowRecordRepository;
 
     public List<BorrowRecord> getAllBorrow() {
         log.info("Fetching all active borrow records");
@@ -68,7 +70,8 @@ public class BorrowService {
     @Transactional
     public BorrowResponce createBorrowBook(
             Long id,
-            Long readerId
+            Long readerId,
+            String currentUsername
     ) {
         log.info("Request to borrow book ID: {} by reader ID: {}", id, readerId);
         Book book = bookRepository.findById(id).
@@ -81,6 +84,14 @@ public class BorrowService {
                     log.error("Create borrow failed: Reader not found with ID: {}", readerId);
                     return new NoSuchElementException("Reader not found : " + readerId);
                 });
+        boolean isAdmin = SecurityContextHolder.getContext().getAuthentication()
+                .getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!isAdmin && !reader.getFullName().equals(currentUsername)) {
+            log.error("User {} tried to borrow book for reader {}", currentUsername, reader.getFullName());
+            throw new AccessDeniedException("Вы можете бронировать книги только для себя!");
+        }
         if (book.getAvailableCopies()<=0){
             log.warn("Create borrow rejected: Book '{}' (ID: {}) has no available copies", book.getName(), id);
             throw new IllegalStateException("Not found avaible copies : " + book.getAvailableCopies());

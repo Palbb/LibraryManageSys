@@ -7,6 +7,8 @@ import com.LibraryManagmentSystem.service.BorrowService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -26,11 +28,11 @@ public class BorrowController {
     }
     @PostMapping("/borrowBook")
     public ResponseEntity<BorrowResponce> borrowBook(
-            @Valid
-            @RequestBody BorrowRequest borrowRequest
+            @Valid @RequestBody BorrowRequest borrowRequest,
+            Authentication authentication
             ){
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(borrowService.createBorrowBook(borrowRequest.getBookId(), borrowRequest.getReaderId()));
+                .body(borrowService.createBorrowBook(borrowRequest.getBookId(), borrowRequest.getReaderId() , authentication.getName()));
     }
     @PutMapping("/return/{id}")
     public ResponseEntity<Void> returnBook(

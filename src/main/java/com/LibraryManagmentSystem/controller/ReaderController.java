@@ -18,25 +18,27 @@ public class ReaderController {
         this.readerService = readerService;
     }
     @GetMapping("/search/email/{email}")
-
     public ResponseEntity<ReaderResponce> getByEmail(
         @PathVariable String email
     ) {
         return ResponseEntity.ok(readerService.getReaderByEmail(email));
     }
+
     @GetMapping("/search/name/{fullName}")
     public ResponseEntity<ReaderResponce> getbyFullName(
             @PathVariable String fullName
     ){
         return ResponseEntity.ok(readerService.getByFullName(fullName));
     }
-    @PostMapping
+
+    @PostMapping("/create")
     public ResponseEntity<ReaderResponce> createReader(
             @Valid
             @RequestBody ReaderCreateRequest dto
             ){
         return ResponseEntity.status(HttpStatus.CREATED).body(readerService.createReader(dto));
     }
+
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteReader(
             @PathVariable Long id

@@ -19,7 +19,7 @@ public class BookController {
         this.bookService = bookService;
     }
 
-    @GetMapping("/getAllBooks")
+    @GetMapping("/search/allBooks")
     public ResponseEntity<List<BookResponce>> getAllBooks(){
         return ResponseEntity.ok(bookService.getAllBooks());
     }
@@ -41,7 +41,7 @@ public class BookController {
             return ResponseEntity.ok(bookService.getBooksByAuthor(author));
         }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<BookResponce> createBook(
             @Valid
             @RequestBody BookRequest dto
