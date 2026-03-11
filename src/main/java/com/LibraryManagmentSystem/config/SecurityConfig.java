@@ -9,10 +9,8 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -25,20 +23,19 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http.csrf(csrf -> csrf.disable());
-        http.exceptionHandling(ex -> ex.authenticationEntryPoint(EntryPoint()).accessDeniedHandler(DeniedHandler()));
-        http.exceptionHandling(access -> DeniedHandler());
         http.authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/accounts/registration").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/books/**").permitAll()
-                .requestMatchers("/api/borrow/borrowBook","/api/borrow/return/{id}","/api/readers/create").hasRole("USER")
-                .requestMatchers("/api/books/**", "/api/borrow/**", "/api/readers").hasRole("ADMIN"));
+                .requestMatchers("/api/borrow/borrowBook").hasRole("USER")
+                .requestMatchers("/api/borrow/return/{id}").hasRole("USER")
+                .anyRequest().authenticated());
+        http.exceptionHandling(ex -> ex.authenticationEntryPoint(EntryPoint()).accessDeniedHandler(DeniedHandler()));
         http.httpBasic(Customizer.withDefaults());
         return http.build();
     }
     @Bean
-    public UserDetailsService UserDetailsService() throws Exception{
-        UserDetails user = User.withUsername("User1").password("{noop}123").roles("USER").build();
-        UserDetails admin = User.withUsername("Admin").password("{noop}admin").roles("ADMIN").build();
-        return new InMemoryUserDetailsManager(admin, user);
+    public BCryptPasswordEncoder Encoder(){
+        return new BCryptPasswordEncoder(BCryptPasswordEncoder.BCryptVersion.$2B);
     }
 
     @Bean

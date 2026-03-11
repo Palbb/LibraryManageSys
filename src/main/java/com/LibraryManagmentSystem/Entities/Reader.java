@@ -1,6 +1,7 @@
 package com.LibraryManagmentSystem.Entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 
 import java.time.LocalDate;
 
@@ -12,11 +13,22 @@ public class Reader {
     private Long id;
     @Column(nullable = false)
     private String fullName;
-    @Column(nullable = false, unique = true)
+    @Email
     private String email;
+    @OneToOne
+    @JoinColumn(name = "account_id", nullable = false )
+    Account account;
 
     private LocalDate registrationDate = LocalDate.now();
 
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
+    }
 
     public void setId(Long id) {
         this.id = id;

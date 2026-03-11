@@ -12,6 +12,7 @@ public interface ReaderRepository extends JpaRepository<Reader,Long> {
 
     boolean existsByEmail(String email);
 
+    boolean existsByFullName(String username);
 
     Optional<Reader> findByFullNameContainingIgnoreCase(String fullName);
 }

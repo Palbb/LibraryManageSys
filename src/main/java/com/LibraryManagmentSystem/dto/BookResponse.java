@@ -1,20 +1,25 @@
 package com.LibraryManagmentSystem.dto;
 
-import jakarta.validation.constraints.NotBlank;
+
 import lombok.Getter;
 import lombok.Setter;
 
-public class BookRequest {
-    @NotBlank(message = "The title must be written")
+public class BookResponse {
+    private Long id;
     private String title;
-    @NotBlank(message = "The book author must be written")
     private String author;
-    @NotBlank(message = "The book name must be written")
     private String name;
-    @NotBlank(message = "The book isbn must be written")
     private String isbn;
 
     private int availableCopies;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getTitle() {
         return title;

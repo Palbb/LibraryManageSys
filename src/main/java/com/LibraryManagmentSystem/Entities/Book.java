@@ -1,6 +1,8 @@
 package com.LibraryManagmentSystem.Entities;
 
 import jakarta.persistence.*;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Entity
 @Table(name = "books")

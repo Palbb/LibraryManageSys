@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
@@ -28,5 +29,13 @@ public class GlobalExeptionHandler {
         apiError.setStatus(HttpStatus.BAD_REQUEST.value());
         apiError.setTimestamp(LocalDateTime.now());
         return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiError> accesDenied(AccessDeniedException ex){
+        ApiError apiError = new ApiError();
+        apiError.setMessage(ex.getMessage());
+        apiError.setStatus(HttpStatus.FORBIDDEN.value());
+        apiError.setTimestamp(LocalDateTime.now());
+        return new ResponseEntity<>(apiError, HttpStatus.FORBIDDEN);
     }
 }
