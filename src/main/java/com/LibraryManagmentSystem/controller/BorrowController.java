@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 
-@Slf4j
 
 @RestController
 @RequestMapping("/api/borrow")
@@ -29,6 +28,7 @@ public class BorrowController {
         this.borrowService = borrowService;
     }
 
+    @PreAuthorize("hasRole('USER')")
     @PostMapping("/borrowBook")
     public ResponseEntity<BorrowResponse> borrowBook(
             @Valid @RequestBody BorrowRequest borrowRequest,
@@ -37,6 +37,7 @@ public class BorrowController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(borrowService.createBorrowBook(borrowRequest.getBookId(), borrowRequest.getReaderId() , authentication.getName()));
     }
+    @PreAuthorize("hasRole('USER')")
     @PutMapping("/return/{id}")
     public ResponseEntity<Void> returnBook(
             @PathVariable Long id ,
@@ -45,6 +46,7 @@ public class BorrowController {
         borrowService.returnBorrowBook(id , authentication.getName());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/alldebtors")
     public ResponseEntity<List<BorrowDebtorResponse>> getDebtors (
     ){

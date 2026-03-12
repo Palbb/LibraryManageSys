@@ -1,11 +1,8 @@
 package com.LibraryManagmentSystem.dto;
 
-import jakarta.persistence.Column;
+import com.LibraryManagmentSystem.Entities.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-
-import java.time.LocalDate;
 
 
 public class AccountCreateRequest {
@@ -17,6 +14,7 @@ public class AccountCreateRequest {
     private String fullName;
     @Email
     private String email;
+
 
     public String getUsername() {
         return username;

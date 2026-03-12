@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-@Slf4j
+
 @RestController
 @RequestMapping("/api/books")
 public class BookController {
@@ -52,10 +52,18 @@ public class BookController {
         return ResponseEntity.status(HttpStatus.CREATED).body(bookService.createBook(dto));
     }
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/delete/{name}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteBook(
-            @PathVariable String name
+            @PathVariable Long id
     ){
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(bookService.deleteBook(id));
+    }
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/delivery/{copies}/")
+    public ResponseEntity<BookResponse> deliveryBook(
+            @PathVariable Integer copies ,
+            @RequestParam String name
+    ){
+        return ResponseEntity.ok(bookService.addCopies(copies, name));
     }
 }

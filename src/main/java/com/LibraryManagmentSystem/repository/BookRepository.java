@@ -3,6 +3,7 @@ package com.LibraryManagmentSystem.repository;
 import com.LibraryManagmentSystem.Entities.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
+import java.util.Optional;
 
 public interface BookRepository extends JpaRepository<Book, Long> {
     List<Book> findByAuthorContaining(String author);
@@ -11,7 +12,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     List<Book> findByAvailableCopiesGreaterThan(int limit);
 
-    List<Book> findByNameContaining(String name);
+    Optional<Book> findByName(String name);
 
     Boolean existsByIsbn(String isbn);
 

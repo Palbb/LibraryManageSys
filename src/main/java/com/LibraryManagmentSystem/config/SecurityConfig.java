@@ -26,10 +26,10 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/accounts/registration").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/books/**").permitAll()
-                .requestMatchers("/api/borrow/borrowBook").hasRole("USER")
-                .requestMatchers("/api/borrow/return/{id}").hasRole("USER")
                 .anyRequest().authenticated());
-        http.exceptionHandling(ex -> ex.authenticationEntryPoint(EntryPoint()).accessDeniedHandler(DeniedHandler()));
+        http.exceptionHandling(ex -> ex
+                .authenticationEntryPoint(EntryPoint())
+                .accessDeniedHandler(DeniedHandler()));
         http.httpBasic(Customizer.withDefaults());
         return http.build();
     }

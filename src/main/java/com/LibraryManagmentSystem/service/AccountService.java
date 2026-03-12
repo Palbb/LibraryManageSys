@@ -2,6 +2,8 @@ package com.LibraryManagmentSystem.service;
 
 import com.LibraryManagmentSystem.Entities.Account;
 import com.LibraryManagmentSystem.Entities.Reader;
+import com.LibraryManagmentSystem.Entities.Role;
+import com.LibraryManagmentSystem.dto.AccountAdminResponce;
 import com.LibraryManagmentSystem.dto.AccountCreateRequest;
 import com.LibraryManagmentSystem.dto.AccountResponse;
 import com.LibraryManagmentSystem.repository.AccountRepository;
@@ -12,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-@Slf4j
 @Service
 public class AccountService {
     private final AccountRepository accountRepository;
@@ -26,6 +27,18 @@ public class AccountService {
     }
 
     @Transactional
+    public AccountAdminResponce promotion(Long id){
+        var account = accountRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("Account with this id: " + id + " does not exists"));
+        account.setRole(Role.ADMIN);
+        AccountAdminResponce response = new AccountAdminResponce();
+        response.setUsername(account.getUsername());
+        response.setRole(account.getRole());
+        accountRepository.save(account);
+        return response;
+    }
+
+    @Transactional
     public AccountResponse createAccount(AccountCreateRequest dto){
          if (accountRepository.existsByUsername(dto.getUsername())){
             throw new IllegalArgumentException("Username already taken");
@@ -36,7 +49,7 @@ public class AccountService {
         Account account = new Account();
         account.setPassword(passwordEncoder.encode(dto.getPassword()));
         account.setUsername(dto.getUsername());
-        account.setRoles("USER");
+        account.setRole(Role.USER);
         accountRepository.save(account);
         Reader reader = new Reader();
         reader.setEmail(dto.getEmail());

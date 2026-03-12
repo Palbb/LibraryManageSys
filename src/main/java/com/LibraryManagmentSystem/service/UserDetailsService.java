@@ -19,9 +19,8 @@ public class UserDetailsService implements org.springframework.security.core.use
     }
 
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        System.out.println("Ищем пользователя: " + username);
         var user1 = accountRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("User with this username does not exists"));
-        return User.builder().password(user1.getPassword()).username(user1.getUsername()).authorities(("ROLE_"+user1.getRoles()).trim().toUpperCase()).build();
+        return User.builder().password(user1.getPassword()).username(user1.getUsername()).authorities(("ROLE_"+user1.getRole()).trim().toUpperCase()).build();
     }
 }

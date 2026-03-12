@@ -65,15 +65,32 @@ public class BookService {
         return toBookResponce(save);
     }
 
-    public void deleteBook(String name){
-        log.info("Attempting to delete book by name: {}", name);
+    public Void deleteBook(Long id){
+        log.info("Attempting to delete book by id: {}", id);
+        Book deleted = bookRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.warn("Delete failed: No book found with name containing '{}'", id);
+                    return new IllegalStateException("A book with this name does not exists : " + id);
+                });
+        bookRepository.delete(deleted);
+        log.info("Book '{}' (ID: {}) successfully deleted", deleted.getName(), deleted.getId());
+        return null;
+    }
+
+    public BookResponse addCopies(Integer copies, String name) {
+        log.info("Attempting to add avaibleCopies : {}", copies);
         if (!bookRepository.existsByName(name)){
-            log.warn("Delete failed: No book found with name containing '{}'", name);
+            log.warn("Put failed: No book found with name containing '{}'", name);
             throw new IllegalStateException("A book with this name does not exists : " + name);
         }
-        Book delete = bookRepository.findByNameContaining(name).get(0);
-        bookRepository.delete(delete);
-        log.info("Book '{}' (ID: {}) successfully deleted", delete.getName(), delete.getId());
+        var book = bookRepository.findByName(name)
+                .orElseThrow(() -> {
+                    log.warn("Put failed: No book found with name containing '{}'", name);
+                    return new IllegalStateException("A book with this name does not exists : " + name);
+                });
+        book.setAvailableCopies(book.getAvailableCopies() + copies);
+        bookRepository.save(book);
+        return toBookResponce(book);
     }
 
     private List<BookResponse> toBookResponces(List<Book> list){
@@ -95,4 +112,5 @@ public class BookService {
 
         return dto;
     }
+
 }
