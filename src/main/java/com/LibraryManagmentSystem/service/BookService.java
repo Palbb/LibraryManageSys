@@ -2,30 +2,34 @@ package com.LibraryManagmentSystem.service;
 
 import com.LibraryManagmentSystem.Entities.Book;
 import com.LibraryManagmentSystem.dto.BookRequest;
-import com.LibraryManagmentSystem.dto.BookResponce;
+import com.LibraryManagmentSystem.dto.BookResponse;
 import com.LibraryManagmentSystem.repository.BookRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-@Slf4j
 @Service
-@RequiredArgsConstructor
+
 public class BookService {
     private final BookRepository bookRepository;
+    private static final Logger log = LoggerFactory.getLogger(BookService.class);
 
-    public List<BookResponce> getAllBooks(){
+    public BookService(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
+    }
+
+    public List<BookResponse> getAllBooks(){
         log.info("Fetching all books from database");
         var save = toBookResponces(bookRepository.findAll());
         log.debug("Found {} books", save.size());
         return save;
     }
 
-    public BookResponce getBookById(Long id){
+    public BookResponse getBookById(Long id){
 
         log.info("Finding book by ID: {}", id);
          var bookbyid =  bookRepository.findById(id)
@@ -39,12 +43,12 @@ public class BookService {
         return save;
     }
 
-    public List<BookResponce> getBooksByAuthor(String author) {
+    public List<BookResponse> getBooksByAuthor(String author) {
         log.info("Searching books by author: {}", author);
         return toBookResponces(bookRepository.findByAuthorContaining(author));
     }
 
-    public BookResponce createBook(BookRequest dto){
+    public BookResponse createBook(BookRequest dto){
         log.info("Attempting to create a new book with ISBN: {}", dto.getIsbn());
         Book book = new Book();
         book.setAuthor(dto.getAuthor());
@@ -61,26 +65,43 @@ public class BookService {
         return toBookResponce(save);
     }
 
-    public void deleteBook(String name){
-        log.info("Attempting to delete book by name: {}", name);
-        if (!bookRepository.existsByName(name)){
-            log.warn("Delete failed: No book found with name containing '{}'", name);
-            throw new IllegalStateException("A book with this name does not exists : " + name);
-        }
-        Book delete = bookRepository.findByNameContaining(name).get(0);
-        bookRepository.delete(delete);
-        log.info("Book '{}' (ID: {}) successfully deleted", delete.getName(), delete.getId());
+    public Void deleteBook(Long id){
+        log.info("Attempting to delete book by id: {}", id);
+        Book deleted = bookRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.warn("Delete failed: No book found with name containing '{}'", id);
+                    return new IllegalStateException("A book with this name does not exists : " + id);
+                });
+        bookRepository.delete(deleted);
+        log.info("Book '{}' (ID: {}) successfully deleted", deleted.getName(), deleted.getId());
+        return null;
     }
 
-    private List<BookResponce> toBookResponces(List<Book> list){
-        List<BookResponce> bookResponces = new ArrayList<>();
+    public BookResponse addCopies(Integer copies, String name) {
+        log.info("Attempting to add avaibleCopies : {}", copies);
+        if (!bookRepository.existsByName(name)){
+            log.warn("Put failed: No book found with name containing '{}'", name);
+            throw new IllegalStateException("A book with this name does not exists : " + name);
+        }
+        var book = bookRepository.findByName(name)
+                .orElseThrow(() -> {
+                    log.warn("Put failed: No book found with name containing '{}'", name);
+                    return new IllegalStateException("A book with this name does not exists : " + name);
+                });
+        book.setAvailableCopies(book.getAvailableCopies() + copies);
+        bookRepository.save(book);
+        return toBookResponce(book);
+    }
+
+    private List<BookResponse> toBookResponces(List<Book> list){
+        List<BookResponse> bookResponses = new ArrayList<>();
         return list.stream()
                 .map(this::toBookResponce)
                 .toList();
     }
-    private BookResponce toBookResponce(Book book){
+    private BookResponse toBookResponce(Book book){
 
-        BookResponce dto = new BookResponce();
+        BookResponse dto = new BookResponse();
 
             dto.setId(book.getId());
             dto.setAuthor(book.getAuthor());
@@ -91,4 +112,5 @@ public class BookService {
 
         return dto;
     }
+
 }

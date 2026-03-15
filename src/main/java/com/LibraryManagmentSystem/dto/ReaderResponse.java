@@ -3,7 +3,8 @@ package com.LibraryManagmentSystem.dto;
 
 import java.time.LocalDate;
 
-public class ReaderResponce {
+
+public class ReaderResponse {
 
     private Long id;
     private String fullName;
@@ -12,14 +13,6 @@ public class ReaderResponce {
 
     public Long getId() {
         return id;
-    }
-
-    public LocalDate getRegistrationDate() {
-        return registrationDate;
-    }
-
-    public void setRegistrationDate(LocalDate registrationDate) {
-        this.registrationDate = registrationDate;
     }
 
     public void setId(Long id) {
@@ -40,5 +33,13 @@ public class ReaderResponce {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public LocalDate getRegistrationDate() {
+        return registrationDate;
+    }
+
+    public void setRegistrationDate(LocalDate registrationDate) {
+        this.registrationDate = registrationDate;
     }
 }

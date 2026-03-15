@@ -2,9 +2,10 @@ package com.LibraryManagmentSystem.dto;
 
 import jakarta.validation.constraints.NotNull;
 
+
 import java.time.LocalDate;
 
-public class BorrowDebtorResponce {
+public class BorrowDebtorResponse {
     @NotNull
     private String readerName;
     @NotNull
@@ -14,37 +15,36 @@ public class BorrowDebtorResponce {
     @NotNull
     private Long daysOverdue;
 
-    public void setDaysOverdue(Long daysOverdue) {
-        this.daysOverdue = daysOverdue;
-    }
 
-    public Long getDaysOverdue() {
-        return daysOverdue;
+    public String getReaderName() {
+        return readerName;
     }
 
     public void setReaderName(String readerName) {
         this.readerName = readerName;
     }
 
-    public void setBookName(String bookName) {
-        this.bookName = bookName;
-    }
-
-    public void setDueDate(LocalDate dueDate) {
-        this.dueDate = dueDate;
-    }
-
-
-    public String getReaderName() {
-        return readerName;
-    }
-
     public String getBookName() {
         return bookName;
+    }
+
+    public void setBookName(String bookName) {
+        this.bookName = bookName;
     }
 
     public LocalDate getDueDate() {
         return dueDate;
     }
 
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public Long getDaysOverdue() {
+        return daysOverdue;
+    }
+
+    public void setDaysOverdue(Long daysOverdue) {
+        this.daysOverdue = daysOverdue;
+    }
 }

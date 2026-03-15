@@ -1,5 +1,6 @@
 package com.LibraryManagmentSystem.dto;
 
+
 import java.time.LocalDateTime;
 
 public class ApiError {
@@ -7,6 +8,7 @@ public class ApiError {
     private String message;
     private int status;
     LocalDateTime timestamp;
+
 
     public String getMessage() {
         return message;
