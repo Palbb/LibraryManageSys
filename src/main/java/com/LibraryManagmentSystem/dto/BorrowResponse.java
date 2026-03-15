@@ -1,7 +1,5 @@
 package com.LibraryManagmentSystem.dto;
 
-import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDate;
 

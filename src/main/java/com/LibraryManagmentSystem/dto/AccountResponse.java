@@ -1,7 +1,6 @@
 package com.LibraryManagmentSystem.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+
 
 public class AccountResponse {
 

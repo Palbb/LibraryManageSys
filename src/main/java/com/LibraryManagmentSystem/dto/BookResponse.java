@@ -1,8 +1,6 @@
 package com.LibraryManagmentSystem.dto;
 
 
-import lombok.Getter;
-import lombok.Setter;
 
 public class BookResponse {
     private Long id;

@@ -9,8 +9,6 @@ import com.LibraryManagmentSystem.dto.AccountResponse;
 import com.LibraryManagmentSystem.repository.AccountRepository;
 import com.LibraryManagmentSystem.repository.ReaderRepository;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

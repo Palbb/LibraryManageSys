@@ -9,8 +9,6 @@ import com.LibraryManagmentSystem.repository.BookRepository;
 import com.LibraryManagmentSystem.repository.BorrowRecordRepository;
 import com.LibraryManagmentSystem.repository.ReaderRepository;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;

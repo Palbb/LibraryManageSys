@@ -2,8 +2,6 @@ package com.LibraryManagmentSystem.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
-import lombok.Setter;
 
 public class ReaderCreateRequest {
     @NotBlank(message = "The fullname must be written")

@@ -1,8 +1,6 @@
 package com.LibraryManagmentSystem.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
-import lombok.Setter;
 
 public class BookRequest {
     @NotBlank(message = "The title must be written")
